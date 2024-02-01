@@ -1,9 +1,10 @@
 {
   "env": {
     "es2021": true,
-    "node": true
+    "node": true,
+    "react-native/react-native": true
   },
-  "extends": ["plugin:react/recommended", "airbnb", "airbnb/hooks", "prettier", "prettier/react"],
+  "extends": ["plugin:react/recommended", "airbnb", "airbnb/hooks", "prettier"],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
@@ -20,6 +21,9 @@
     "no-use-before-define": ["error", { "variables": false }],
 
     // ignore errors for the react-navigation package
-    "react/prop-types": ["error", { "ignore": ["navigation", "navigation.navigate"] }]
+    "react/prop-types": ["error", { "ignore": ["navigation", "navigation.navigate"] }],
+
+    "react/react-in-jsx-scope": 0,
+    "react/style-prop-object": 0
   }
 }
