@@ -12,21 +12,25 @@ const CountDown = ({ minutes = 0.2, isPaused, onProgress }) => {
   const internal = React.useRef(null);
 
   const countDownTimer = () => {
+    let count;
+
     setMillis((currentTime) => {
       if (currentTime === 0) {
         return currentTime;
       }
 
       const timeLeft = currentTime - 1000;
-      onProgress(timeLeft / minutesToMills(minutes));
+      count = currentTime - 1000;
+
       return timeLeft;
     });
+
+    onProgress(count / minutesToMills(minutes));
+    !count && clearInterval(internal.current);
   };
 
   useEffect(() => {
-    if (isPaused) {
-      return;
-    }
+    if (isPaused) return;
 
     internal.current = setInterval(countDownTimer, 1000);
 
