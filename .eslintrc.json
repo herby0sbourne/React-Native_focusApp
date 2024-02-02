@@ -24,6 +24,8 @@
     "react/prop-types": ["error", { "ignore": ["navigation", "navigation.navigate"] }],
 
     "react/react-in-jsx-scope": 0,
-    "react/style-prop-object": 0
+    "react/style-prop-object": 0,
+    "react/function-component-definition": 0,
+    "arrow-body-style": "off"
   }
 }
