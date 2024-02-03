@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 
 import Focus from "./src/features/focus/Focus";
 import Timer from "./src/features/timer/Timer";
@@ -8,15 +8,37 @@ import Timer from "./src/features/timer/Timer";
 import { colors } from "./src/utils/colors";
 import { spacing } from "./src/utils/sizes";
 
+const STATUSES = {
+  COMPLETED: 1,
+  CANCELED: 2,
+};
+
 export default function App() {
-  const [focusSubject, setFocusSubject] = useState("grading");
+  const [focusSubject, setFocusSubject] = useState(null);
+  const [focusHistory, setFocusHistory] = useState([]);
+
+  const focusHistoryWithState = (subject, status) => {
+    setFocusHistory((prevFocus) => {
+      return [...prevFocus, { subject, status }];
+    });
+  };
 
   return (
     <>
       <StatusBar style="light" />
       <View style={styles.container}>
         {focusSubject ? (
-          <Timer focusSubject={focusSubject} />
+          <Timer
+            focusSubject={focusSubject}
+            onTimerEnd={() => {
+              focusHistoryWithState(focusSubject, STATUSES.COMPLETED);
+              setFocusSubject(null);
+            }}
+            clearSubject={() => {
+              focusHistoryWithState(focusSubject, STATUSES.CANCELED);
+              setFocusSubject(null);
+            }}
+          />
         ) : (
           <Focus addSubject={setFocusSubject} />
         )}
