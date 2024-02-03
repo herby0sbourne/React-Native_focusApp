@@ -7,7 +7,7 @@ import { fontSize, spacing } from "../utils/sizes";
 const minutesToMills = (minutes) => minutes * 1000 * 60;
 const formatTime = (time) => (time < 10 ? `0${time}` : time);
 
-const CountDown = ({ minutes = 0.2, isPaused, onProgress }) => {
+const CountDown = ({ minutes = 0.2, isPaused, onProgress, onEnd }) => {
   const [millis, setMillis] = useState(minutesToMills(null));
   const interval = React.useRef(null);
 
@@ -16,6 +16,8 @@ const CountDown = ({ minutes = 0.2, isPaused, onProgress }) => {
 
     setMillis((currentTime) => {
       if (currentTime === 0) {
+        onEnd();
+        clearInterval(interval.current);
         return currentTime;
       }
 
@@ -26,7 +28,7 @@ const CountDown = ({ minutes = 0.2, isPaused, onProgress }) => {
     });
 
     onProgress(count / minutesToMills(minutes));
-    !count && clearInterval(interval.current);
+    // !count && clearInterval(interval.current);
   };
 
   useEffect(() => {
