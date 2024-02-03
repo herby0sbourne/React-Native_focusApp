@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { TextInput } from "react-native-paper";
 import PropTypes from "prop-types";
+import { TextInput } from "react-native-paper";
+import { View, Text, StyleSheet } from "react-native";
 
 import RoundButton from "../../components/RoundButton";
-import { fontSize, spacing } from "../../utils/sizes";
+
 import { colors } from "../../utils/colors";
+import { fontSize, spacing } from "../../utils/sizes";
 
 const Focus = ({ addSubject }) => {
-  const [textChange, setTextChange] = useState(null);
+  const [subject, setSubject] = useState(null);
 
   return (
     <View style={styles.container}>
@@ -17,7 +18,7 @@ const Focus = ({ addSubject }) => {
         <View style={styles.inputWrapper}>
           <TextInput
             onSubmitEditing={({ nativeEvent }) => {
-              setTextChange(nativeEvent.text);
+              setSubject(nativeEvent.text);
             }}
             style={{ flex: 1, marginRight: 20 }}
           />
@@ -25,7 +26,7 @@ const Focus = ({ addSubject }) => {
             size={50}
             title="+"
             onPress={() => {
-              addSubject(textChange);
+              addSubject(subject);
             }}
           />
         </View>
