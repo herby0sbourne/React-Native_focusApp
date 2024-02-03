@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Focus from "./src/features/focus/Focus";
 import Timer from "./src/features/timer/Timer";
@@ -23,6 +24,34 @@ export default function App() {
       return [...prevFocus, { subject, status }];
     });
   };
+
+  const saveFocusHistory = async () => {
+    try {
+      await AsyncStorage.setItem("focusHistory", JSON.stringify(focusHistory));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getFocusHistory = async () => {
+    try {
+      const history = await AsyncStorage.getItem("focusHistory");
+
+      if (history && JSON.parse(history).length) {
+        setFocusHistory(JSON.parse(history));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getFocusHistory();
+  }, []);
+
+  useEffect(() => {
+    saveFocusHistory();
+  }, [focusHistory]);
 
   return (
     <>
