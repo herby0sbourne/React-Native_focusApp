@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { ProgressBar } from "react-native-paper";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Vibration, Platform } from "react-native";
+// import * as Haptics from "expo-haptics";
+import { useKeepAwake } from "expo-keep-awake";
 
+import Timing from "./Timing";
 import CountDown from "../../components/CountDown";
 import RoundButton from "../../components/RoundButton";
 
 import { colors } from "../../utils/colors";
 import { spacing } from "../../utils/sizes";
-import Timing from "./Timing";
 
-const Timer = ({ focusSubject }) => {
-  const [minutes, setminutes] = useState(0.2);
+const DEFAULT_TIME = 0.1;
+
+const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
+  useKeepAwake();
+  const [minutes, setminutes] = useState(DEFAULT_TIME);
   const [isStarted, setIsStarted] = useState(false);
   const [progress, setProgress] = useState(1);
 
@@ -18,6 +23,25 @@ const Timer = ({ focusSubject }) => {
     if (isNaN(progress)) return;
 
     setProgress(progress);
+  };
+
+  const vibrate = () => {
+    if (Platform.OS === "ios") {
+      const interval = setInterval(() => Vibration.vibrate(), 1000);
+      setTimeout(() => clearInterval(interval), 10000);
+    }
+
+    if (Platform.OS === "android") {
+      Vibration.vibrate(10000);
+    }
+  };
+
+  const onEnd = () => {
+    vibrate();
+    setminutes(DEFAULT_TIME);
+    setProgress(1);
+    setIsStarted(false);
+    onTimerEnd();
   };
 
   const changeTime = (mins) => {
@@ -29,7 +53,7 @@ const Timer = ({ focusSubject }) => {
   return (
     <View style={styles.container}>
       <View style={styles.countDown}>
-        <CountDown minutes={minutes} isPaused={!isStarted} onProgress={onProgress} />
+        <CountDown minutes={minutes} isPaused={!isStarted} onProgress={onProgress} onEnd={onEnd} />
       </View>
       <View style={{ paddingTop: spacing.xxl }}>
         <Text style={styles.title}>Focusing on:</Text>
@@ -49,6 +73,9 @@ const Timer = ({ focusSubject }) => {
         ) : (
           <RoundButton title="start" onPress={() => setIsStarted(true)} />
         )}
+      </View>
+      <View style={styles.clearBtn}>
+        <RoundButton title="-" size={50} onPress={() => clearSubject()} />
       </View>
     </View>
   );
@@ -80,6 +107,10 @@ const styles = StyleSheet.create({
     padding: 15,
     justifyContent: "center",
     alignItems: "center",
+  },
+  clearBtn: {
+    paddingBottom: 25,
+    paddingLeft: 25,
   },
 });
 
